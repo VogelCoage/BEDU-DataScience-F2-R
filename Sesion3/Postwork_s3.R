@@ -23,6 +23,8 @@ df <- read.csv("https://raw.githubusercontent.com/beduExpert/Programacion-R-Sant
 str(df)
 summary(df)
 
+df <- na.omit(df) #desde aquí se omiten los N/A
+
 df$Categoria <- factor(df$Categoria)
 
 df$Grupo <- factor(df$Grupo, labels = c("A", "B"))
@@ -32,22 +34,22 @@ df$Grupo <- factor(df$Grupo, labels = c("A", "B"))
 df.mediciones <- select(df, Mediciones)
 View(df.mediciones)
 
-#MEDIA - omitiendo valores nulos o N/A
-mean(na.omit(df$Mediciones)) #62.88494
+#MEDIA
+mean(df$Mediciones) #62.88494
 
-#MEDIANA - omitiendo valores nulos o N/A
-median(na.omit(df$Mediciones)) #49.3
+#MEDIANA
+median(df$Mediciones) #49.3
 
-#MODA - omitiendo valores nulos o N/A
-Mode(na.omit(df$Mediciones)) #23.3 - freq. 6
+#MODA
+Mode(df$Mediciones) #23.3 - freq. 6
 
 #2) Con base en tu resultado anterior, ¿qué se puede concluir respecto al sesgo de `Mediciones`?
 "R. que claramente tiene un sesgo hacia el lado derecho"
 
 #3) Calcula e interpreta la desviación estándar y los cuartiles de la distribución de `Mediciones`
-sd(na.omit(df$Mediciones)) #53.76972
+sd(df$Mediciones) #53.76972
 
-cuartiles <- quantile(na.omit(df$Mediciones), probs = c(0.25,0.5,0.75))
+cuartiles <- quantile(df$Mediciones, probs = c(0.25,0.5,0.75))
 cuartiles
 
 "R. por lo que es posible apreciar, existe una gran dispersión de los datos"
@@ -56,11 +58,11 @@ cuartiles
 ¿Consideras que sólo una categoría está generando el sesgo?"
 
 #histograma con la librería ggplot
-k = ceiling(1 + 3.3 * log10(length(na.omit(df$Mediciones))))
+k = ceiling(1 + 3.3 * log10(length(df$Mediciones)))
 
-ac = (max(na.omit(df$Mediciones))-min(na.omit(df$Mediciones))) / k
+ac = (max(df$Mediciones)-min(df$Mediciones)) / k
 
-bins = seq(min(na.omit(df$Mediciones)), max(na.omit(df$Mediciones)), by = ac)
+bins = seq(min(df$Mediciones), max(df$Mediciones), by = ac)
 
 my_hist <- hist(df$Mediciones, breaks = bins, main = "Histograma")
 
