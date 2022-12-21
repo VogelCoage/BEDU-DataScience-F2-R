@@ -99,3 +99,95 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 Residual standard error: 1.657 on 197 degrees of freedom
 Multiple R-squared:  0.9026,	Adjusted R-squared:  0.9016 
 F-statistic: 912.7 on 2 and 197 DF,  p-value: < 2.2e-16"
+
+#SUPUESTOS DEL MODELO DE REGRESIÓN LINEAL Y PREDICCIÓN
+
+StanRes2 <- rstandard(m2)
+
+par(mfrow = c(2, 2))
+
+plot(TV, StanRes2, ylab = "Residuales Estandarizados")
+plot(Radio, StanRes2, ylab = "Residuales Estandarizados")
+plot(Newspaper, StanRes2, ylab = "Residuales Estandarizados")
+
+qqnorm(StanRes2)
+qqline(StanRes2, col="red")
+
+#Gráfica02_s6
+
+dev.off()
+
+#Shapiro-Wilk normality test
+
+shapiro.test(StanRes2)
+"Ho: La variable distribuye como una normal
+Ha: La variable no distribuye como una normal"
+
+"Shapiro-Wilk normality test
+
+data:  StanRes2
+W = 0.97535, p-value = 0.001365
+"
+
+#NC 90% - sigificancia 0.1 - rechazo | 95% sig. 0.05 - rechazo | 99% sig. 0.01 - rechazo
+
+"Una vez validados estos supuestos, podemos realizar utilizar nuestro modelo estimado 
+para realizar predicciones y obtener su intervalo de confianza"
+data <- data.frame(
+  TV = c(148.0, 75.5, 290.4, 1.5),
+  Radio = c(23.5, 12.5, 46.8, 3.1),
+  Newspaper = c(26.0, 14.5, 112.6, 2.5)
+)
+
+predict(m2, newdata = data, interval = "confidence", level = 0.95)
+    "fit       lwr      upr
+1 15.207928 14.976755 15.43910
+2 10.081458  9.741523 10.42139
+3 25.458628 24.890054 26.02720
+4  5.044794  4.502648  5.58694"
+
+"Para comprender mejor manera el papel de los intervalos en la predicción, vamos a 
+estimar un modelo de regresión simple para realizar una representación gráfica"
+modelo <- lm(Sales ~ TV)
+
+TV.values <- data.frame(TV = sort(c(50.5, 133.6, 204.9, 276.8), decreasing = FALSE))
+pred <- predict(modelo, newdata = TV.values, interval = "confidence", level = 0.95)
+
+plot(TV, Sales, xlab = "TV", 
+     ylab = "Sales", pch = 16)
+points(TV.values$TV, pred[,1], xlab = "TV", 
+       ylab = "Sales", pch = 16, col = "red")
+abline(lsfit(TV, Sales), col="orange")
+
+#Gráfica03_s6
+
+plot(TV.values$TV, pred[,1], xlab = "TV", 
+     ylab = "Sales", pch = 16, col = "red")
+abline(lsfit(TV.values$TV, pred[,1]), col="orange")
+
+lines(TV.values$TV, pred[, 2], lty = 2, lwd = 2, col = "blue")
+lines(TV.values$TV, pred[, 3], lty = 2, lwd = 2, col = "blue")
+
+#Gráfica04_s6
+
+modelo2 <- lm(Sales ~ Radio)
+
+Radio.values <- data.frame(Radio = sort(c(12.6, 23.5, 35.8, 48.7), decreasing = FALSE))
+pred2 <- predict(modelo2, newdata = Radio.values, interval = "confidence", level = 0.95)
+
+plot(Radio, Sales, xlab = "Radio", 
+     ylab = "Sales", pch = 16)
+points(Radio.values$Radio, pred2[,1], xlab = "Radio", 
+       ylab = "Sales", pch = 16, col = "red")
+abline(lsfit(Radio, Sales), col="orange")
+
+#Gráfica05_s6
+
+plot(Radio.values$Radio, pred2[,1], xlab = "Radio", 
+     ylab = "Sales", pch = 16, col = "red")
+abline(lsfit(Radio.values$Radio, pred2[,1]), col="orange")
+
+lines(Radio.values$Radio, pred2[, 2], lty = 2, lwd = 2, col = "blue")
+lines(Radio.values$Radio, pred2[, 3], lty = 2, lwd = 2, col = "blue")
+
+#Gráfica06_s6
